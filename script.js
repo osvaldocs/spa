@@ -1,4 +1,5 @@
 import {get} from'./services.js';
+const url = "http://localhost:3000/users"
 
 const routes = {
   "/": "./users.html",   
@@ -19,30 +20,37 @@ async function navigate(pathname) {
   const html = await fetch(route).then((res) => res.text());
   document.getElementById("content").innerHTML = html;
   history.pushState({}, "", pathname);
+
+  if(pathname == "/users") {
+    console.log("contenedor de usuarios");  
+    renderUsers();
+  }
 }
 
 window.addEventListener("popstate", () =>
   navigate(location.pathname)
 );
 
+async function renderUsers() {
 
-console.log(await get("http://localhost:3000/users"));
+   let usersData = await get(url);
+  const tbody = document.getElementById("userRows");
 
-const user1 = document.getElementById("userList");
+  let rows = "";
+  usersData.forEach(user => {
 
-const usersArray = await get("http://localhost:3000/users");
-
-function showUsers() {
-  usersArray.forEach(obj => {
-    const divContainer = document.createElement("div");
-    divContainer.classList.add("user-card");
-
-    divContainer.innerHTML += `
-    <h3>${obj.name}</h3>
-    <p>${obj.email}</p>
-    <p>${obj.enrollNumber}</p>
-    <p>${obj.dateOfAdmission}</p>
-    `
-    user1.appendChild(divContainer);
+    rows += `
+    <tr>
+      <td>${user.name}</td>
+      <td>${user.email}</td>
+      <td>${user.phone}</td>
+      <td>${user.enrollNumber}</td>
+      <td>${user.dateOfAdmission}</td>
+    </tr> 
+    `;
   });
+     
+ tbody.innerHTML += rows;
+
 }
+
