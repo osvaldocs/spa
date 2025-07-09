@@ -1,4 +1,4 @@
-import {get} from'./services.js';
+import {get, post} from'./services.js';
 const url = "http://localhost:3000/users"
 
 const routes = {
@@ -26,7 +26,13 @@ console.log("Contenido cargado:", html);
   if(pathname == "/users") {
     setTimeout(renderUsers, 0);
   }
+
+  if (pathname === "/newuser") {
+    setTimeout(setupForm, 0);
+  }
+
 }
+ 
 
 window.addEventListener("popstate", () =>
   navigate(location.pathname)
@@ -53,5 +59,31 @@ async function renderUsers() {
      
  tbody.innerHTML += rows;
 
+}
+
+async function setupForm() {
+  const form = document.querySelector(".form-container");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const newUser = {
+      "name": form.name.value.trim(),
+      "email": form.email.value.trim(),
+      "phone": form.phone.value.trim(),
+      "enrollNumber": form.enrollNumber.value.trim(),
+      "dateOfAdmission": form.dateOfAdmission.value.trim()
+    };
+
+    try {
+    await post(url, newUser);
+    alert("User successfully saved.");
+    form.reset();
+  } catch (err) {
+    console.error("Error at save:", err);
+    alert("An error occurred while saving the user.");
+  }
+
+  })
 }
 
