@@ -1,19 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPA</title>
-</head>
-<body>
-    <h1> SPA </h1>
-    <nav>
-        <a href="/users" data-link >Users</a>
-        <a href="/newuser" data-link >New Users</a>
-        <a href="/about" data-link >Acerca de usarios</a>
-    </nav>
-
-    <main id="content">
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>SPA</title>
+        <link rel="stylesheet" href="./styles.css">
+    </head>
+    <body>
+    
+        
         <div class="flex-container">
             <div class="side-bar">
                 <div class="top">
@@ -23,26 +18,33 @@
                     <p>Admin</p>
                 </div>
                 <div class="mid">
-                    <ul>
-                        <li>Home</li>
-                        <li>Course</li>
-                        <li>Users</li>
-                        <li>Payment</li>
-                        <li>Report</li>
-                        <li>Settings</li>
-                    </ul>   
+                    <nav>   
+                        <ul>
+                            <li><a href="/home" data-link >Home</a></li>
+                            <li>Course</li>
+                            <li><a href="/users" data-link >Users</a></li>
+                            <li>Payment</li>
+                            <li>Report</li>
+                            <li>Settings</li>
+                        </ul>
+                    </nav>        
                 </div>
                 <div class="bot">
                     <li>Logout</li>
                 </div>
-
             </div>
+
+            <main id="content">
+                
+            </main>
+            
         </div>
-    </main>
-    
-    <script type="module" src="./script.js"></script>
-</body>
+        
+
+        
+        <script type="module" src="./script.js"></script>
+    </body>
 
 
 
-</html>
+    </html>

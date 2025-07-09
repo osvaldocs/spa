@@ -2,7 +2,7 @@ import {get} from'./services.js';
 const url = "http://localhost:3000/users"
 
 const routes = {
-  "/": "./users.html",   
+  "/home": "./home.html",   
   "/users": "./users.html",
   "/newuser": "./newuser.html",
   "/about": "./about.html",
@@ -20,10 +20,11 @@ async function navigate(pathname) {
   const html = await fetch(route).then((res) => res.text());
   document.getElementById("content").innerHTML = html;
   history.pushState({}, "", pathname);
+  console.log("Ruta actual:", pathname);
+console.log("Contenido cargado:", html);
 
   if(pathname == "/users") {
-    console.log("contenedor de usuarios");  
-    renderUsers();
+    setTimeout(renderUsers, 0);
   }
 }
 

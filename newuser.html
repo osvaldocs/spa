@@ -1,9 +1,22 @@
-<section>
-    <h2>Nuevo usuatio</h2>
-    <label>Nombre</label>
-    <input></input>
-    <label>cedula</label>
-    <input></input>
-    <label>telefono</label>
-    <input></input>
+<section class="newUser-container">
+    <h2>Add New Student</h2>
+
+    <form class="form-container">
+        <img src="./assets/usuarioImg.png" alt="img de usuario">
+        <h3>Register New Student</h3>
+        <label for="name">Full Name</label>
+        <input type="text" name="name" id="name" required>
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required>
+        <label for="phone">Phone</label>
+        <input type="number" name="phone" id="phone" required>
+        <label for="enrollNumber">Enroll Number</label>
+        <input type="number" name="enrollNumber" id="enrollNumber" required>
+        <label for="dateOfAdmission">Date of Admission</label>
+        <input type="date" name="dateOfAdmission" id="dateOfAdmission" required>
+        <div class="button-group">
+            <button type="reset">Cancel</button>
+            <button type="submit">Save</button>
+        </div>
+    </form>
 </section>
