@@ -1,4 +1,4 @@
-import {get, post, deletes} from'./services.js';
+import {get, post, deletes, update} from'./services.js';
 const url = "http://localhost:3000/users"
 
 const routes = {
@@ -6,7 +6,7 @@ const routes = {
   "/users": "./users.html",
   "/newuser": "./newuser.html",
   "/about": "./about.html",
-  "/edit": "./ediUser.html"
+  "/edit": "./editUser.html"
 };
 
 document.body.addEventListener("click", (e) => {
@@ -56,8 +56,8 @@ async function renderUsers() {
       <td>${user.enrollNumber}</td>
       <td>${user.dateOfAdmission}</td>
       <td>
-        <button class="editUser-button" id="${user.id}>
-          <a href="/editUser">Edit User</a>
+        <button class="editUser-button" >
+          <a href="/edit" data-link id=${user.id}>Edit Userr </a>
         </button>
       </td>
        <td>
@@ -84,6 +84,19 @@ async function renderUsers() {
       }
     })
   })
+
+   let buttonsEdit = document.querySelectorAll(".editUser-button")
+  buttonsEdit.forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      let id = btn.id;
+      let editUser = await update(url, id)
+      if(!editUser) {
+        alert("An error ocurred while try update.");
+      }
+    })
+  })
+
 }
 
 
@@ -93,10 +106,7 @@ async function setupForm() {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    let count = await get(url);
-
     const newUser = {
-      "id": String(count.length),
       "name": form.name.value.trim(),
       "email": form.email.value.trim(),
       "phone": form.phone.value.trim(),
@@ -117,5 +127,13 @@ async function setupForm() {
 }
 
 async function editUser() {
-
+  
+  const newUser = {
+      "name": form.name.value.trim(),
+      "email": form.email.value.trim(),
+      "phone": form.phone.value.trim(),
+      "enrollNumber": form.enrollNumber.value.trim(),
+      "dateOfAdmission": form.dateOfAdmission.value.trim()
+    };
 }
+
