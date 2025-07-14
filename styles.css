@@ -175,3 +175,25 @@ table {
   text-align: center;
   padding: 2rem;            
 }
+
+a.editUser-button {
+    background-color: #e0dddd;
+    color: black;
+    text-decoration: none;
+    border-radius: 2px;
+    display: inline-block; 
+    font-weight: bold;
+    cursor: pointer;
+    border: 0.5px solid black;
+}
+
+.login-button {
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: rgb(113, 54, 229);
+  color: white;
+  cursor: pointer;
+  margin: 1rem;
+}

@@ -1,68 +1,74 @@
 {
   "users": [
     {
-      "id": "1",
-      "name": "Nombre Completo",
-      "email": "correo@ejemplo.com",
-      "phone": "1234567890",
-      "enrollNumber": "12345678901234",
-      "dateOfAdmission": "08-Dec-2021"
-    },
-    {
       "id": "2",
       "name": "Nombre Completo",
       "email": "correo@ejemplo.com",
       "phone": "1234567890",
       "enrollNumber": "12345678901234",
-      "dateOfAdmission": "08-Dec-2021"
+      "dateOfAdmission": "08-Dec-2021",
+      "password": "123456",
+      "role": "user"
     },
     {
       "id": "3",
-      "name": "Nombre Completo",
-      "email": "correo@ejemplo.com",
+      "name": "Elbio Completo",
+      "email": "elbio@ejemplo.com",
       "phone": "1234567890",
       "enrollNumber": "12345678901234",
-      "dateOfAdmission": "08-Dec-2021"
+      "dateOfAdmission": "08-Dec-2021",
+      "password": "admin1234",
+      "role": "admin"
     },
     {
       "id": "4",
-      "name": "Nombre Completo",
-      "email": "correo@ejemplo.com",
+      "name": "Lucas Completo",
+      "email": "lucas@ejemplo.com",
       "phone": "1234567890",
       "enrollNumber": "12345678901234",
-      "dateOfAdmission": "08-Dec-2021"
+      "dateOfAdmission": "08-Dec-2021",
+      "password": "123456",
+      "role": "user"
     },
     {
       "id": "5",
-      "name": "Nombre Completo",
-      "email": "correo@ejemplo.com",
+      "name": "Juana Completo",
+      "email": "juana@ejemplo.com",
       "phone": "1234567890",
       "enrollNumber": "12345678901234",
-      "dateOfAdmission": "08-Dec-2021"
+      "dateOfAdmission": "08-Dec-2021",
+      "password": "123456",
+      "role": "user"
     },
     {
       "id": "6",
-      "name": "Nombre Completo",
-      "email": "correo@ejemplo.com",
+      "name": "Mirtha Completo",
+      "email": "mirtha@ejemplo.com",
       "phone": "1234567890",
       "enrollNumber": "12345678901234",
-      "dateOfAdmission": "08-Dec-2021"
+      "dateOfAdmission": "08-Dec-2021",
+      "password": "123456",
+      "role": "user"
     },
     {
       "id": "7",
-      "name": "Nombre Completo",
-      "email": "correo@ejemplo.com",
+      "name": "Gustavo Completo",
+      "email": "gustavo@ejemplo.com",
       "phone": "1234567890",
       "enrollNumber": "12345678901234",
-      "dateOfAdmission": "08-Dec-2021"
+      "dateOfAdmission": "08-Dec-2021",
+      "password": "123456",
+      "role": "user"
     },
     {
       "id": "8",
-      "name": "Nombre Completo",
-      "email": "correo@ejemplo.com",
+      "name": "Matias Completo",
+      "email": "matias@ejemplo.com",
       "phone": "1234567890",
       "enrollNumber": "12345678901234",
-      "dateOfAdmission": "08-Dec-2021"
+      "dateOfAdmission": "08-Dec-2021",
+      "password": "123456",
+      "role": "user"
     },
     {
       "id": "85ee",
@@ -70,8 +76,17 @@
       "email": "pablo@gmail.com",
       "phone": "5484256",
       "enrollNumber": "444877772",
-      "dateOfAdmission": "2025-07-22"
+      "dateOfAdmission": "2025-07-22",
+      "password": "123456",
+      "role": "user"
+    },
+    {
+      "id": "472e",
+      "name": "Berlin completp",
+      "email": "berlin@ejemplo.com",
+      "phone": "4544878411",
+      "enrollNumber": "4655888871",
+      "dateOfAdmission": "2024-06-21"
     }
-    
   ]
 }

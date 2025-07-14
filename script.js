@@ -1,105 +1,157 @@
-import {get, post, deletes, update} from'./services.js';
-const url = "http://localhost:3000/users"
+// Importo las funciones del servicio para interactuar con la API (GET, POST, DELETE, PUT)
+import { get, post, deletes, update } from './services.js';
 
+const url = "http://localhost:3000/users";
+let currentUser = null;
+
+// Defino las rutas del SPA (Single Page Application)
 const routes = {
   "/home": "./home.html",   
   "/users": "./users.html",
   "/newuser": "./newuser.html",
   "/about": "./about.html",
-  "/edit": "./editUser.html"
+  "/edit": "./editUser.html",
+  "/login": "./login.html"
 };
 
-document.body.addEventListener("click", (e) => {
+// Manejo la navegación sin recargar la página
+document.body.addEventListener("click", (e) => {  
   if (e.target.matches("[data-link]")) {
     e.preventDefault();
     navigate(e.target.getAttribute("href"));
   }
 });
 
-async function navigate(pathname) {
+// Función principal de navegación
+async function navigate(pathnameWithQuery) {
+  const urlObj = new URL(pathnameWithQuery, window.location.origin);
+  const pathname = urlObj.pathname;
   const route = routes[pathname];
-  const html = await fetch(route).then((res) => res.text());
-  document.getElementById("content").innerHTML = html;
-  history.pushState({}, "", pathname);
-  console.log("Ruta actual:", pathname);
-console.log("Contenido cargado:", html);
+  const user = JSON.parse(sessionStorage.getItem("loggedUser")); // Recupero el usuario logueado
 
-  if(pathname == "/users") {
-    setTimeout(renderUsers, 0);
-  } else if (pathname === "/newuser") {
-    setTimeout(setupForm, 0);
-  } else if (pathname === "/edit") {
-    setTimeout(editUser, 0);
+  if (!route) {
+    console.error("Ruta no encontrada:", pathname);
+    return;
   }
 
-}
- 
+  const html = await fetch(route).then((res) => res.text());
+  document.getElementById("content").innerHTML = html;
+  history.pushState({}, "", pathnameWithQuery);
+  renderSidebarUser();
 
+  // Protejo la vista /users para que solo sea accesible si hay un usuario logueado
+  if (pathname === "/users") {
+    if (!user) {
+      alert("Debes iniciar sesión para ver esta página.");
+      return navigate("/login");
+    }
+    setTimeout(renderUsers, 0);
+
+  // Solo el rol admin puede acceder al formulario para crear nuevos usuarios
+  } else if (pathname === "/newuser") {
+    if (!user || user.role !== "admin") {
+      alert("Acceso denegado. Solo administradores.");
+      return navigate("/home");
+    }
+    setTimeout(setupForm, 0);
+
+  // Solo admin puede editar usuarios
+  } else if (pathname === "/edit") {
+    if (!user || user.role !== "admin") {
+      alert("Acceso denegado. Solo administradores.");
+      return navigate("/home");
+    }
+    const id = urlObj.searchParams.get("id");
+    setTimeout(() => editUser(id), 0);
+
+  } else if (pathname === "/login") {
+    setTimeout(setupLogin, 0);
+  }
+}
+
+// Cierro la sesión y redirijo al login
+document.addEventListener("click", (e) => {
+  if (e.target.id === "logout") {
+    const confirmed = confirm("¿Estás seguro de que querés cerrar sesión?");
+    if (!confirmed) return;
+
+    sessionStorage.removeItem("loggedUser");
+    alert("Sesión cerrada.");
+    navigate("/login"); 
+  }
+});
+
+// Manejo el botón "Atrás" del navegador
 window.addEventListener("popstate", () =>
   navigate(location.pathname)
 );
 
+// Renderizo la tabla de usuarios, controlando qué botones ve cada rol
 async function renderUsers() {
+  console.log("Ejecutando renderUsers");
 
-   let usersData = await get(url);
+  currentUser = JSON.parse(sessionStorage.getItem("loggedUser"));
+  if (!currentUser) {
+    alert("Debes iniciar sesión para ver esta página.");
+    return navigate("/login");
+  }
+
+  // Oculto el botón de "Agregar estudiante" si no es admin
+  const newUserBtn = document.getElementById("newUser-button");
+  if (newUserBtn && currentUser.role !== "admin") {
+    newUserBtn.style.display = "none";
+  }
+
+  let usersData = await get(url);
   const tbody = document.getElementById("userRows");
-  
   tbody.innerHTML = "";
   let rows = "";
+
   usersData.forEach(user => {
-
     rows += `
-    <tr>
-      <td>${user.name}</td>
-      <td>${user.email}</td>
-      <td>${user.phone}</td>
-      <td>${user.enrollNumber}</td>
-      <td>${user.dateOfAdmission}</td>
-      <td>
-        <button class="editUser-button" >
-          <a href="/edit" data-link id=${user.id}>Edit Userr </a>
-        </button>
-      </td>
-       <td>
-        <button class="deleteUser-button" id=${user.id}>Delete User</button>
-      </td>   
-    </tr> 
-    `;
+      <tr>
+        <td>${user.name}</td>
+        <td>${user.email}</td>
+        <td>${user.phone}</td>
+        <td>${user.enrollNumber}</td>
+        <td>${user.dateOfAdmission}</td>
+        <td>
+          ${currentUser.role === "admin" 
+            ? `<a class="editUser-button" href="/edit?id=${user.id}" data-link>Editar</a>` 
+            : `--`}
+        </td>
+        <td>
+          ${currentUser.role === "admin" 
+            ? `<button class="deleteUser-button" id="${user.id}">Eliminar</button>` 
+            : `--`}
+        </td>
+      </tr>`;
   });
-     
- tbody.innerHTML += rows;
 
+  tbody.innerHTML += rows;
 
-  let buttons = document.querySelectorAll(".deleteUser-button")
-  buttons.forEach(btn => {
-    btn.addEventListener("click", async (e) => {
-      e.preventDefault();
-      let id = btn.id;
-      let deleteUser = await deletes(url, id)
-      if(deleteUser) {
-        alert("User correctly deleted.");
-        renderUsers();
-      } else {
-        alert("An error ocurred while try delete.");
-      }
-    })
-  })
-
-   let buttonsEdit = document.querySelectorAll(".editUser-button")
-  buttonsEdit.forEach(btn => {
-    btn.addEventListener("click", async (e) => {
-      e.preventDefault();
-      let id = btn.id;
-      let editUser = await update(url, id)
-      if(!editUser) {
-        alert("An error ocurred while try update.");
-      }
-    })
-  })
-
+  // Solo los admin pueden eliminar usuarios
+  if (currentUser.role === "admin") {
+    let buttons = document.querySelectorAll(".deleteUser-button");
+    buttons.forEach(btn => {
+      btn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const id = btn.id;
+        const confirmed = confirm("¿Estás seguro de que querés eliminar al usuario?");
+        if (!confirmed) return;
+        const deleteUser = await deletes(url, id);
+        if (deleteUser) {
+          alert("Usuario eliminado correctamente.");
+          renderUsers();
+        } else {
+          alert("Ocurrió un error al intentar eliminar.");
+        }
+      });
+    });
+  }
 }
 
-
+// Formulario para crear nuevo usuario
 async function setupForm() {
   const form = document.querySelector(".form-container");
 
@@ -111,29 +163,104 @@ async function setupForm() {
       "email": form.email.value.trim(),
       "phone": form.phone.value.trim(),
       "enrollNumber": form.enrollNumber.value.trim(),
-      "dateOfAdmission": form.dateOfAdmission.value.trim()
+      "dateOfAdmission": form.dateOfAdmission.value.trim(),
+      "password": form.password.value.trim()
     };
 
     try {
-    await post(url, newUser);
-    alert("User successfully saved.");
-    form.reset();
+      await post(url, newUser);
+      alert("Usuario guardado exitosamente.");
+      form.reset();
+    } catch (err) {
+      console.error("Error al guardar:", err);
+      alert("Ocurrió un error al guardar el usuario.");
+    }
+  });
+}
+
+// Formulario para editar usuario (solo admin)
+async function editUser(id) {
+  const form = document.querySelector(".form-container");
+
+  try {
+    const user = await get(`${url}/${id}`);
+
+    form.name.value = user.name;
+    form.email.value = user.email;
+    form.phone.value = user.phone;
+    form.enrollNumber.value = user.enrollNumber;
+    form.dateOfAdmission.value = user.dateOfAdmission;
+    form.password.value = user.password;
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const updatedUser = {
+        "name": form.name.value.trim(),
+        "email": form.email.value.trim(),
+        "phone": form.phone.value.trim(),
+        "enrollNumber": form.enrollNumber.value.trim(),
+        "dateOfAdmission": form.dateOfAdmission.value.trim(),
+        "password": form.password.value.trim()
+      };
+
+      try {
+        await update(url, id, updatedUser);
+        alert("Usuario actualizado correctamente.");
+        history.pushState({}, "", "/users");
+        navigate("/users");
+      } catch (err) {
+        console.error("Error al actualizar usuario:", err);
+        alert("Ocurrió un error al actualizar.");
+      }
+    });
+
   } catch (err) {
-    console.error("Error at save:", err);
-    alert("An error occurred while saving the user.");
+    console.error("Error al cargar usuario:", err);
+    alert("Usuario no encontrado.");
   }
-
-  })
 }
 
-async function editUser() {
-  
-  const newUser = {
-      "name": form.name.value.trim(),
-      "email": form.email.value.trim(),
-      "phone": form.phone.value.trim(),
-      "enrollNumber": form.enrollNumber.value.trim(),
-      "dateOfAdmission": form.dateOfAdmission.value.trim()
-    };
+// Lógica del login (verifica si el email y contraseña existen)
+async function setupLogin() {
+  const form = document.querySelector(".form-container");
+
+  try {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = form.email.value.trim();
+      const password = form.password.value.trim();
+
+      let usersData = await get(url);
+      const foundUser = usersData.find(u => u.email === email && u.password === password);
+
+      if (!foundUser) {
+        alert("Correo o contraseña incorrectos.");
+        return;
+      }
+
+      sessionStorage.setItem("loggedUser", JSON.stringify(foundUser));
+      alert(`Bienvenido, ${foundUser.name}`);
+      navigate("/home");
+    });
+  } catch (err) {
+    console.error("Error:", err);
+  }
 }
 
+// Muestra el nombre y rol del usuario logueado en la barra lateral
+function renderSidebarUser() {
+  const user = JSON.parse(sessionStorage.getItem("loggedUser"));
+
+  const nameElement = document.getElementById("sidebar-username");
+  const roleElement = document.getElementById("sidebar-role");    
+
+  if (user) {
+    nameElement.textContent = user.name;
+    roleElement.textContent = user.role;
+  } else {
+    nameElement.textContent = "Invitado";
+    roleElement.textContent = "";
+  }
+}
